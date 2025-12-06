@@ -1,0 +1,49 @@
+<com:Content contentPlaceHolderId="Main">
+    <h2>
+        <com:Text id="Modifiers" html.class="modifiers" /> <com:Text id="Type" /> <com:Text id="TitleNamespace" html.class="namespace" /><com:Text id="TitleClassName" html.class="className" />
+        <com:Text id="ParentClass" html.class="parent" visible="false">extends <com:HyperLink id="ParentName" /></com:Text>
+    </h2>
+
+    <div class="source-path">Local source file: <com:Text id="LocalPathRoot" html.class="source-path root"/><com:Text id="LocalPath" html.class="source-path path" /></div>
+
+    <com:MultiView id="Views">
+        <com:MultiView.View>
+            <section>
+                <h3>Namespace members</h3>
+                <com:.classes.ItemsTree id="SubIndexTree" />
+            </section>
+        </com:MultiView.View>
+        <com:MultiView.View>
+            <section class="description">
+                <h3>Introduction</h3>
+                <com:.classes.Comment id="DocComment" />
+            </section>
+            <com:.classes.TraitsList id="TraitsList" />
+            <com:.classes.ConstantsList id="ConstantsList" title="Predefined constants" />
+            <com:.classes.PropertiesList id="PropsList" title="Control props" />
+            <com:.classes.PropertiesList id="PublicPropertiesList" title="Public properties" />
+            <com:.classes.PropertiesList id="ProtectedPropertiesList" title="Protected properties" />
+
+            <com:.classes.MethodsList id="ActionMethodsList" title="Action methods" />
+            <com:.classes.MethodsList id="PublicMethodsList" title="Public methods" />
+            <com:.classes.MethodsList id="ProtectedMethodsList" title="Protected methods" />
+
+            <com:.classes.MethodsList id="EventsList" title="Events" />
+
+            <section class="source">
+                <h3>Source code</h3>
+                <com:Literal id="Source" encode="false" />
+            </section>
+            <com:Container id="SourceTemplate" visible="false">
+                <section class="source">
+                    <h3>Template code</h3>
+                    <code><com:Literal id="SourceTemplateStr" encode="false" /></code>
+                </section>
+                <section class="source">
+                    <h3>Template compiled code</h3>
+                    <com:Literal id="SourceTemplateCompiled" encode="false" />
+                </section>
+            </com:Container>
+        </com:MultiView.View>
+    </com:MultiView>
+</com:Content>

@@ -1,0 +1,62 @@
+<com:Content contentPlaceHolderId="Content">
+    <h2 class="home">H2 in home</h2>
+    aaa
+        <com:Panel id="Test" visible="true" html.id="some-id" html.style="font-weight:bold">
+            <h2>Sub page</h1>
+
+            <div><com:Form.TextBox id="Input1" /></div>
+            <div><com:Form.TextBox id="Input2" /></div>
+            <div><com:Form.TextBox id="Input3" /></div>
+        </com:Panel>
+
+        <com:Form.Button text="Click me!" onClick="Button_Clicked" />
+        <com:Form.Button text="Or me!" onClick="Button2_Clicked" />
+
+        <div>
+            <com:Form.Button text="Add first" onClick="Add_First_Clicked" />
+            <com:Form.Button text="Add last" onClick="Add_Last_Clicked" />
+            <com:Form.Button text="Remove first" onClick="Remove_First_Clicked" />
+            <com:Form.Button text="Remove last" onClick="Remove_Last_Clicked" />
+            <com:Form.Button text="Empty" onClick="Empty_Clicked" />
+        </div>
+
+        <com:Repeater id="Rows" onItemDataBind="Rows_DataBind" showHeaderWhenEmpty="true" showFooterWhenEmpty="true">
+            <prop:headerTemplate>
+                <div>This is header</div>
+            </prop:headerTemplate>
+            <prop:emptyTemplate>
+                <div>This is empty</div>
+            </prop:emptyTemplate>
+            <prop:itemTemplate>
+                <div>
+                    <com:Form.TextBox id="Input" html.size="30" /><com:Form.Button id="Button" onClick="Rows_Button_Click" />
+                    <com:Form.Button id="DeleteButton" onClick="Rows_Button_Delete_Click" text="Delete" />
+                </div>
+            </prop:itemTemplate>
+            <prop:separatorTemplate>
+                <div>---</div>
+            </prop:separatorTemplate>
+            <prop:footerTemplate>
+                <div>This is footer</div>
+            </prop:footerTemplate>
+        </com:Repeater>
+
+        <div>
+            <com:Form.Button onClick="Switch_View_Button_Click" data="0" text="show view 1" />
+            <com:Form.Button onClick="Switch_View_Button_Click" data="1" text="show view 2" />
+            <com:Form.Button onClick="Switch_View_Button_Click" data="2" text="show view 3" />
+        </div>
+
+        <com:MultiView id="Views" activeViewIndex="0">
+            <com:MultiView.View>
+                <h2>view 1</h2>
+            </com:MultiView.View>
+            <com:MultiView.View>
+                <h2>view 2</h2>
+            </com:MultiView.View>
+            <com:MultiView.View>
+                <h2>view 3</h2>
+            </com:MultiView.View>
+        </com:MultiView>
+    bbb
+</com:Content>

@@ -1,0 +1,3 @@
+<com:Content contentPlaceHolderId="Main">
+    <h2>Hello <com:Text id="Name" text="T" html.class="foo bar baz" />!</h2>
+</com:Content>

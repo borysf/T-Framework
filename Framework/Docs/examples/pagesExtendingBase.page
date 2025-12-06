@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <com:Head>
+        <title>MyFirstApp</title>
+    </com:Head>
+    <body>
+        <header>
+            <h1><com:Literal id="Header" text="HEADER" /></h1>
+        </header>
+        <main>
+            <com:ContentPlaceHolder id="Main" />
+        </main>
+        <footer>
+            FOOTER
+        </footer>
+    </body>
+</html>

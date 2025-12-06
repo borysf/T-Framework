@@ -1,0 +1,287 @@
+body {
+    font-size: 11pt;
+    background-color: white;
+    color: black;
+    margin: 0;
+    padding: 0;
+}
+
+body, .comment {
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+header h1 {
+    margin: 0;
+}
+
+header {
+    padding: 10px;
+    background-color: #292961;
+}
+
+header h1 a[href] {
+    color: white;
+    border-bottom-color: white;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+}
+
+main .left,
+main .right {
+    padding: 20px;
+}
+
+main .left {
+    flex-grow: 0;
+    border-right: 1px solid #e9e9e9;
+    background-color: #f5f5f5;
+}
+
+main .right {
+    flex-grow: 1;
+}
+
+main .right > h2 {
+    margin-top: 0;
+}
+
+section {
+    margin-bottom: 30px;
+}
+
+footer {
+    background-color: #f5f5f5;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+h2 {
+    font-weight: normal;
+}
+
+h2, h3, h4, h5, h6 {
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e3e3e3;
+    margin-bottom: 15px;
+}
+
+
+.tree .ext {
+    color: #a6a6a6;
+    font-size: 0.7em
+}
+
+.tree .node,
+.tree .leaf {
+    background-repeat: no-repeat;
+    background-position: left 5px;
+    background-size: 12px;
+    padding-left: 17px;
+}
+
+.tree .node {
+    background-image: url(images/folder.png);
+}
+
+.tree .leaf.class-php,
+.tree .leaf.interface-php {
+    background-image: url(images/php.png);
+}
+
+.tree, .tree li {
+    list-style: none;
+    margin: 0;
+    padding: 0
+}
+
+.tree li {
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+
+.tree ul li {
+    padding-left: 20px;
+}
+
+
+a[href] {
+    text-decoration: none;
+    border-bottom: 1px dotted rgb(0, 88, 143);
+    color: rgb(0, 88, 143);
+}
+
+a[href]:hover {
+    border-bottom-style: dashed;
+}
+
+.source-path {
+    font-size: 10pt;
+}
+
+h2 .className {
+    font-weight: bold;
+}
+
+h2 .className {
+    color: black;
+}
+
+h2 .namespace,
+.source-path.root {
+    color: gray;
+}
+
+.synopsis .code {
+    font-family: "Fira Mono", "Source Code Pro", monospace;
+    word-wrap: break-word;
+    font-size: 0.9em;
+    line-height: 1.8em;
+}
+
+.synopsis .code li {
+    margin-bottom: 5px;
+}
+
+.synopsis .code .comment {
+    margin-left: 20px;
+    line-height: 1.6em;
+}
+
+.description .comment {
+    line-height: 1.5em;
+}
+
+.code .type,
+.code .type.boolean,
+.code .value.boolean,
+.code .type.integer,
+.code .value.integer,
+.code .type.string,
+.code .type.float {
+    color: #693;
+}
+
+.code .name {
+    color: rgb(0, 88, 143);
+}
+
+.code .property.name {
+    font-style: italic;
+}
+
+.code .const,
+.code .modifiers,
+.code .NULL,
+.code .value.array,
+.code .value.string {
+    color: #936
+}
+.code .constant {
+    color: rgb(0, 88, 143);
+}
+.code .attribute {
+    color: rgb(215, 124, 19);
+}
+
+span.code {
+    /* font-size: 0.8em !important; */
+    padding: 2px;
+    margin-left: 3px;
+    margin-right: 3px;
+    border: 1px solid lightgrey;
+    background-color: rgb(245, 242, 242);
+    border-radius: 3px;
+    font-size: 0.8em !important;
+}
+
+.badge {
+    line-height: inherit;
+    font-size: 0.8em;
+    border-radius: 3px;
+    padding: 3px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    opacity: 0.6;
+}
+
+.badge a {
+    color: inherit;
+}
+
+.badge.stateful,
+.badge.prop {
+    background-color: #b8e6bb;
+    color: green;
+}
+
+.badge.inherited {
+    margin-right: 5px;
+    color: rgb(0, 88, 143);
+    background-color: #b8e1e6;
+}
+
+.comment .badge.inherited {
+    background-color: #e3e3e3;
+    color: rgb(79, 79, 79);
+}
+
+.comment .badge.inherited a {
+    border-bottom-color: rgb(79, 79, 79);
+}
+
+code {
+    white-space: pre-wrap;
+    font-size: 0.8em
+}
+
+code .html-tag-begin,
+code .html-tag-end {
+    color: #DD0000;
+}
+
+code .html-tag-name {
+    color: #00598f;
+}
+
+code .html-attr {
+    color: #007700;
+}
+
+code .html-attr-value {
+    color: #DD0000;
+}
+
+code .html-directive {
+    color: rgb(133, 31, 31);
+}
+
+code .html-comment {
+    color: rgb(107, 107, 107);
+}
+
+
+code .control-tag-com,
+code .control-tag-ref {
+    color: #00598f;
+}
+
+code .control-tag-com .control-tag,
+code .control-tag-ref .control-tag,
+code .control-tag-prop .control-tag {
+    font-weight: bold;
+}
+
+code .control-tag-com .html-attr {
+    color: #936;
+}
+
+code .control-tag-prop {
+    color: #936;
+}
+
+code .html-unknown {
+    color: gray;
+}

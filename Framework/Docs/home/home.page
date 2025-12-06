@@ -1,0 +1,803 @@
+<com:Content contentPlaceHolderId="Main">
+    <section>
+        <h2>Welcome to the T-Documentation</h2>
+
+        <p>The T Framework lets you build quickly PHP8.1 applications. It comes with ready-to-go solutions, such as:</p>
+        <ul>
+            <li>Powerful templating (with extendable controls)</li>
+            <li>Security (authentication, authorization)</li>
+            <li>View state (preserving page state between POST requests)</li>
+            <li>API services</li>
+            <li>URL routing</li>
+            <li>Database access</li>
+            <li>...and much more</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Application design</h2>
+
+        <p>Every web application in `T` follows the same basic directory structure and design patterns. At the root of your project you 
+        create your own application class inheriting from <com:HyperLink navigateUrl="[system:docs:path path=System.TApplication]">TApplication</com:HyperLink> class. All other files and directories are put next to it.</p>
+
+        <p>The <com:HyperLink navigateUrl="[system:docs:path path=System.TApplication]">TApplication</com:HyperLink> class is your entry point. Here you configure all the application components, such as routing.</p>
+
+        <p>While viewing this documentation you, in fact, run the <com:HyperLink navigateUrl="[system:docs:path path=Docs.DocsApp]">Docs\DocsApp</com:HyperLink> application. Feel free to see how it is implemented!</p>
+    </section>
+
+    <section>
+        <h2>Introduction to T</h2>
+
+        Setting up a `T` application is really simple. This guide assumes that you already have a web server configured to run with PHP 8.1 
+        and the document root is `/var/www/html` which targets all the traffic to `index.php`.
+        
+        <ol>
+            <li><h4>Setup document root</h4>
+                <pre><code>/var/www/html
+   + Framework
+   + Project
+   - index.php
+                </code></pre>
+            </li>
+            <li><h4>Create index.php</h4>
+            <% highlight_string('<?php 
+require \'Framework/TAutoloader.class.php\';
+
+use System\Http\Request\THttpRequest;
+use System\Http\UriMatcher\THttpUriMatcher;
+
+use Project\MyFirstApp;
+
+$matcher = new THttpUriMatcher;
+
+$matcher->host(\'^localhost$\')->path(\'^/\')->onMatch(function (THttpRequest $request) {
+    $app = new MyFirstApp(\'/\', MyFirstApp::MODE_DEVELOPMENT);
+    $app->run();
+});', true) 
+%>
+                <p>It is possible to have many different applications running at single document root.
+                    They can be set up under different hosts or different URI paths.</p>
+                <p>The code above runs `MyFirstApp` when requested at `localhost` under `/` URI path.</p>
+            </li>
+            <li><h4>Create Project\MyFirstApp.class.php</h4>
+                <% highlight_string('<?php 
+namespace Project;
+
+use System\TApplication;
+
+class MyFirstApp extends TApplication {
+    protected function configureHttpRouter(THttpRouter $router) : void {
+        $router->route(\'home\', \'/\')->target(Pages\home::class);
+    }
+}', true)
+%>
+                <p>Our app is ready to serve pages (almost). In the code above we defined a route named `home` so that every
+                    request to `/` will try to run provided target - in this example a `Pages\home` class.
+                </p>
+                <p>Now, if you try to run your app, you should see a 404 error as defined target does not exist. Let's fix it!</p>
+            </li>
+            <li><h4>Let's create our first page files</h4>
+                <pre><code>/var/www/html
+    + Framework
+    + Project
+        + Pages
+            - home.class.php
+            - home.page
+    - index.php
+                </code></pre>
+                <p>A single page in `T` consists of two files - a PHP class file and a template.</p>
+                <p>As a rule of thumb, the file names and their location must cover the following requirements:
+                    <ul>
+                        <li>class file must be named `&lt;className&gt;.class.php`</li>
+                        <li>page template file must be named `&lt;className&gt;.page`</li>
+                        <li>both files must be in the same directory</li>
+                    </ul>
+                </p>
+            </li>
+            <li><h4>Create page class file - Project/Pages/home.class.php</h4>
+<% highlight_string('<?php 
+namespace Project\Pages;
+
+use System\Web\Page\TPage;
+use System\Web\Action\TActionArgs;
+
+class home extends TPage {
+    protected function Page_Load(TActionArgs $args) : void {
+    }
+}', true)
+%>
+                <p>Please note the namespace defined in the file. The namespace must reflect directory location where your file resides.</p>
+                <p>The above inherited method `Page_Load` is not required to be defined in your page to run.</p>
+                <p>If you wish, you can skip them for the moment, but we will need it later.</p>
+            </li>
+            <li><h4>Create page template - Project/Pages/home.page</h4>
+                <pre><code><% \Docs\master\highlight_html('
+<!doctype html>
+<html>
+    <head>
+        <title>MyFirstApp : home</title>
+    </head>
+    <body>
+        <h1>Hello T!</h1>
+    </body>
+</html>
+') %></code></pre>
+                <p>Nothing fancy, but now open up your browser and navigate to `http://localhost/'. You should see your first page!</p>
+            </li>
+        </ol>
+    </section>
+    <section>
+        <h2>Using controls</h2>
+        <p>The framework ships with a set of predefined controls to make your life easier and to cover the most common use-cases.
+            Here you will learn how to use controls in your templates.
+        </p>
+            In `T` every component that is rendered into HTML is a control, including the 
+            page (<com:HyperLink navigateUrl="[system:docs:path path=System.Web.Page.TPage]">TPage class</com:HyperLink>) 
+            itself. Controls are divided into two main categories: regular controls (<com:HyperLink 
+                navigateUrl="[system:docs:path path=System.Web.Page.Control.TControl]">TControl</com:HyperLink>) 
+            and templated controls (<com:HyperLink 
+                navigateUrl="[system:docs:path path=System.Web.Page.Control.Template.TTemplatedControl]">TTemplatedControl</com:HyperLink>).
+            All controls inherit from <com:HyperLink 
+                navigateUrl="[system:docs:path path=System.Web.Page.Control.TControl]">TControl</com:HyperLink> and share the same basic API.
+        </p>
+        <p>Just like HTML elements are represented as DOM, controls in `T` also maintain a hierarchy. A single control may have many
+            children controls, however every children control can have at most one parent control.
+        </p>
+        <p>All predefined controls are located within <com:HyperLink 
+            navigateUrl="[system:docs:path path=System.Web.Page.Control.Core]">System\Web\Page\Control\Core</com:HyperLink>
+            namespace, which is looked up for controls used in your templates (unless you want to create and use a custom control - this 
+            topic will be covered later).
+        </p>
+        <ol>
+            <li><h4>Let's try it!</h4>
+                <p>Go back to your `home.page` file. We will put some controls into it:</p>
+                <pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <head>
+        <title>MyFirstApp : home</title>
+    </head>
+    <body>
+        <h1>Hello <com:Literal id="Name" text="T" />!</h1>
+    </body>
+</html>
+') %></code></pre>
+                <p><strong>Notice: </strong>Although all control classes are prefixed with `T` letter, there is no
+                need to put this prefix in the template while declaring a control.</p>
+
+                <p><strong>Notice: </strong>value of the `id` prop must be Capitalized. Otherwise compiler will throw an exception.</p>
+
+                <p>Now, if you refresh the page, you will notice that nothing changed. Indeed, from the user's perspective
+                    there is no difference in what he sees, but there is a huge difference in what a programmer can do! 
+                    Let's move on to our `home.class.php` file.
+                </p>
+                <p>Let's put a single line in it:</p>
+<% highlight_string('<?php 
+namespace Project\Pages;
+
+use System\Web\Page\TPage;
+use System\Web\Action\TActionArgs;
+
+class home extends TPage {
+    protected function Page_Load(TActionArgs $args) : void {
+        $this->Name->text = \'John Doe\';
+    }
+}', true) %> 
+                    <p>What has changed? Obviously displayed text is now different. This is what happened:
+                    <ul>
+                        <li>We put a <com:HyperLink navigateUrl="[system:docs:path path=System.Web.Page.Control.Core.TLiteral]">TLiteral</com:HyperLink>
+                        control into our template. TLiteral is a regular control that displays given text without any surrounding tag.</li>
+                        <li>The control has been linked using its `id` attribute so that it is now accessible from within its owner control via `\$this->Name` property.</li>
+                        <li>We assigned a value to its `text` property what caused the text to display.</li>
+                        <li>We did it in `Page_Load` method as this method is run when all the controls are loaded.</li>
+                    </ul>
+                </p>
+                <p><strong>Notice: </strong>TLiteral, by default, encodes all text displayed using `htmlspecialchars()` function due to security reasons.
+                If you wish to display raw HTML, you must explicitly use `encode=&quot;false&quot;` prop. Read more in <com:HyperLink 
+                    navigateUrl="[system:docs:path path=System.Web.Page.Control.Core.TLiteral]">TLiteral docs</com:HyperLink>.
+                </p>
+            </li>
+            <li><h4>Try something different</h4>
+                <p>Now try change TLiteral to something else, let's say <com:HyperLink 
+                    navigateUrl="[system:docs:path path=System.Web.Page.Control.Core.TText]">TText</com:HyperLink>:</p>
+<pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <head>
+        <title>MyFirstApp : home</title>
+    </head>
+    <body>
+        <h1>Hello <com:Text id="Name" text="T" />!</h1>
+    </body>
+</html>
+') %></code></pre>
+                <p>Looks similar, right? But take a look in the output HTML. Now you will notice that John Doe is surrounded by span:</p>
+                <pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <head>
+        <title>MyFirstApp : home</title>
+    </head>
+    <body>
+        <h1>Hello <span>John Doe</span>!</h1>
+    </body>
+</html>
+') %></code></pre>  
+                <p>And what if we put a <com:HyperLink 
+                    navigateUrl="[system:docs:path path=System.Web.Page.Control.Core.TPanel]">TPanel</com:HyperLink> (&lt;com:Panel&gt;)? We get div instead of span:</p>
+<pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <head>
+        <title>MyFirstApp : home</title>
+    </head>
+    <body>
+        <h1>Hello <div>John Doe</div>!</h1>
+    </body>
+</html>
+') %></code></pre>  
+            </li>
+            <li>
+                <h4>I want to style my code!</h4>
+                <p>Right, that may be an important thing. Well, of course you can!
+                     Every regular control that renders HTML tag can be styled. What's more, any other HTML attribute can be set easily.</p>
+                </p>
+                <p>Here comes the <com:HyperLink navigateUrl="[system:docs:path path=System.Web.Page.Control.TControlPropHtml]">html</com:HyperLink> prop into play.</p>
+                <p>The `html` prop basically accepts any sub-prop so that it will treat it as HTML attribute to render. There are two exceptions from this rule:
+                    <ul>
+                        <li><com:HyperLink navigateUrl="[system:docs:path path=System.Web.Page.Control.TControlPropStyle]">html.style</com:HyperLink></li>
+                        <li><com:HyperLink navigateUrl="[system:docs:path path=System.Web.Page.Control.TControlPropClass]">html.class</com:HyperLink></li>
+                    </ul>
+                    The two above have a special meaning as they have its own API to let you manipulate from the PHP level. We will learn about it later, but anyway - these are the props that you are looking for!
+                </p>
+                <p>The first one represents the `style` attribute of an HTML element, and the latter `class` attribute. So let's try it!</p>
+                <p><strong>Notice: </strong> in templates, control attributes named `style` and `class` instead of `html.style` and `html.class` are supported, 
+                    however it is not recommended syntax as they will get different meaning in the future.</p>
+<pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <head>
+        <title>MyFirstApp : home</title>
+    </head>
+    <body>
+        <h1>Hello <com:Text id="Name" text="T" html.style="font-weight:bold" html.class="foo bar baz" />!</h1>
+    </body>
+</html>
+') %></code></pre>
+                <p>Assuming that you didn't change anything in `home.class.php`, the above should render into the following:</p>
+<pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <head>
+        <title>MyFirstApp : home</title>
+    </head>
+    <body>
+        <h1>Hello <span class="foo bar baz" style="font-weight:bold">John Doe</span>!</h1>
+    </body>
+</html>
+') %></code></pre>
+                <p>Okay, so now our John Doe got bolded, but I know what you want to say...</p>
+            </li>
+            <li><h4>&quot;Using inline styles is evil!!! I want to use stylesheets!&quot;</h4>
+                <p>Well, you are right. Inline styles are not a good way to go by, however are supported.</p>
+                <p>To use stylesheets, there is one very important thing to do: put a <com:HyperLink 
+                    navigateUrl="[system:docs:path path=System.Web.Page.Control.THead]">THead</com:HyperLink> control
+                    into the template:</p>
+<pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <com:Head>
+        <title>MyFirstApp : home</title>
+    </com:Head>
+    <body>
+        <h1>Hello <com:Text id="Name" text="T" html.style="font-weight:bold" html.class="foo bar baz" />!</h1>
+    </body>
+</html>
+') %></code></pre>
+                <p>This control has a special meaning for the framework. At first, only one instance is allowed. The framework
+                    uses THead to automatically link some assets, such as stylesheets and scripts. It also allows you to manipulate
+                    the contents of the &lt;head&gt; element from PHP level.
+                </p>
+                <p>So now you are ready to create your stylesheet:</p>
+<pre><code>/var/www/html
+    + Framework
+    + Project
+        + Pages
+            + Assets
+                - index.css
+            - home.class.php
+            - home.page
+    - index.php</code></pre>
+            <p>Now put some contents into Project/Pages/Assets/index.css:</p>
+<pre><code>.foo {
+    background-color: black;
+    color: white;
+}
+.bar {
+    border: 10px solid red;
+}
+.baz {
+    border-color: green;
+}</code></pre>
+                <p>Now your stylesheet is automatically linked.</p>
+
+                <p><strong>Note: </strong>all other css files and images will be accessible relatively to your index.css. 
+                    You can also put them in subdirectories if you wish.</p>
+
+                <p>That's it for the basics! Now we will learn some more advanced topics.</p>
+            </li>
+        </ol>
+    </section>
+    <section>
+        <h2>Linked controls vs referenced controls</h2>
+        <p>There are two ways of accessing the template controls from the owner control. However, before we learn more, we
+            need to stop here and explain what, in fact, a template and owner control are.</p>
+        <p>Basically, a template is a semi-HTML file that defines the layout and location of every single control
+            declared in it. And this is basically what you see when you create it. However, for T, your semi-HTML template,
+            is a &quot;template for actual template&quot;. This means that the code you write gets compiled into PHP code, so
+            think of it as a &quot;template source code&quot;. The framework compiles and caches your templates whenever they
+            gets modified.
+        </p>
+        <p>So now, if you write the template source, for example:</p>
+<pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <com:Head>
+        <title>Example</title>
+    </com:Head>
+    <body>
+        <com:Panel>
+            Hello <com:Text id="Name" />!
+        </com:Panel>
+    </body>
+</html>
+    ') %></code></pre>
+        <p>it gets compiled into:</p>
+<% highlight_string('<?php
+use System\Web\Page\Control\Core\THead;
+use System\Web\Page\Control\Core\TPanel;
+use System\Web\Page\Control\Core\TText;
+use System\Web\Page\Control\Event\TEventArgs;
+use System\Web\Page\Control\Template\TTemplate;
+use System\Web\Page\Control\Template\TTemplateLiteral;
+
+class Example_Template extends TTemplate {
+   const TEMPLATE_SOURCE_FILE        = \'/example/source/file.page\';
+   const TEMPLATE_SOURCE_MODIFIED_AT = 1653758035;
+   const TEMPLATE_SOURCE_COMPILED_AT = 1653758065;
+
+   public readonly TText $Name;
+
+   protected function onCreate(?TEventArgs $args) : void {
+      parent::onCreate($args);
+
+      if (!empty($this->__data)) foreach ($this->__data as $varName => $varValue) { $$varName = $varValue; }
+
+      $this->addControl(new TTemplateLiteral(props: [
+         \'text\' => "<html>\n    "
+      ]));
+
+      $this->addControl(new THead(children: [
+         new TTemplateLiteral(props: [
+            \'text\' => "\n        <title>Example</title>\n    "
+         ])
+      ]));
+
+      $this->addControl(new TTemplateLiteral(props: [
+         \'text\' => "\n    <body>\n        "
+      ]));
+
+      $this->addControl(new TPanel(children: [
+         new TTemplateLiteral(props: [
+            \'text\' => "\n            Hello "
+         ]),
+         $this->Name = new TText(props: [
+            \'id\' => \'Name\'
+         ]),
+         new TTemplateLiteral(props: [
+            \'text\' => "!\n        "
+         ])
+      ]));
+
+      $this->addControl(new TTemplateLiteral(props: [
+         \'text\' => "\n    </body>\n</html>"
+      ]));
+
+      $this->namedControls = [
+         \'Name\' => $this->Name
+      ];
+  }
+}', true)
+%>
+        <p>As mentioned earlier, the compilation is needed because once a template source is compiled into native PHP code,
+            it no longer needs to be interpreted. This is for performance reasons.
+        </p>
+        <p>So now the things are getting interesting - what, in fact, is a compiled template? Well, it is also an (indirect) 
+            instance of TControl.</p>
+        <p>When such template instance is created, it is added as the child of the control who requested it, therefore
+            parent-child relationship between the control and template is established. But the controls within template
+            are not direct children of the main control, rather descendants, so here is where the term of &quot;owner control&quot;
+            comes in. Owner control is a &quot;control owning the template&quot;. It does not have to be direct parent of the template
+            instance so that's why it is differentiated.
+        </p>
+        <p>Does this mean that a single control can have multiple templates at once? Well, indeed. And this behavior is expected and
+            finds useful when it comes to extending the templated controls. We will learn this much later.
+        </p>
+        <p>Ok, so now, when it is clear what template and owner control means, we can learn what control linking and control referencing is.</p>
+        <ul>
+            <li><h4>Control linking</h4>
+                <p>When we were learning the basics we introduced the `id` attribute of the control to be able to access it from our
+                    page class. All controls having its unique attribute (in context of template and, further, owner control) are called
+                    &quot;named controls&quot;.
+                </p>
+                <p>In short, control linking means &quot;take all named controls defined in the template and link them as properties of the owner
+                    control&quot;. And this is what in fact we used in previous examples. 
+                </p>
+                <p>To summarize - all controls defined with `com:` prefix and having the `id` prop get linked into owner control.</p>
+            </li>
+            <li><h4>Control referencing</h4>
+                <p>Control referencing is something opposite to control linking. Basically, it requires a control property to be defined
+                    in owner control and then referenced in the template. There is no need to have the `id` attribute as the control
+                    is already named in the owner control. So let's take a look at the following example:
+                </p>
+                <p>Please notice the `use System\Web\Page\Control\Core\TText` and `protected TText \$Name` in the page class file:</p>
+<% highlight_string('<?php 
+namespace Project\Pages;
+
+use System\Web\Page\TPage;
+use System\Web\Action\TActionArgs;
+use System\Web\Page\Control\Core\TText;
+
+class home extends TPage {
+    protected TText $Name;
+
+    protected function Page_Load(TActionArgs $args) : void {
+        $this->Name->text = \'John Doe\';
+    }
+}', true)
+%>              <p><strong>Notice:</strong> just like in `id` prop case, the name of the class property holding the reference to 
+                template control must be Capitalized. Otherwise the compiler will throw an exception.</p>
+                <p>Now let's take a look at the template. Please notice the `&lt;ref:Name /&gt;` declaration:</p>
+<pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <com:Head>
+        <title>Example</title>
+    </com:Head>
+    <body>
+        <com:Panel>
+            Hello <ref:Name />!
+        </com:Panel>
+    </body>
+</html>') %></code></pre>
+                <p><strong>Note: </strong>in case of referenced controls the `ref:` prefix is not required. The compiler will recognize
+                all Capitalized tag names as references.</p>
+
+                <p>And that's it. To summarize - in general result is the same. You can still access the controls and work
+                    with them no matter what method you choose. In most cases this is a personal choice, however there are
+                    some cases that control referencing is better over linking. Let's keep reading to get to know why!
+                </p>
+            </li>
+            <li><h4>Control linking vs referencing - pros &amp; cons</h4></li>
+            <p>The main difference between control linking and referencing is how the control's class names are resolved.
+                Linked controls use short names, in this case called `com names`, and are resolved by the auto loader 
+                and are limited to two namespaces: your root namespace where your app resides and `System\Web\Page\Control\Core` 
+                where core framework controls are located. For performance reasons, anything outside these two namespaces 
+                will not be looked for the interesting class. They key is that you don't need to remember the full class 
+                name (with its namespace) in order to use the control.
+            </p>
+
+            <p>To tell the compiler that it should look for the control in your app namespace, you can simply do it by
+                putting a dot `.` in the beginning of control's com name, .i.e. `&lt;com:.custom.classes.SomeControl /&gt;`,
+                which will look for `SomeControl.class.php` or `TSomeControl.class.php` within the following
+                directories: `&lt;project_dir&gt;/custom/classes/` or `&lt;project_dir&gt;/custom/classes/SomeControl/`.
+                Unfortunately it won't work properly if the control class you are interested in is in some other location.
+                In such a case referenced controls work better as you natively define from what namespace the class should be loaded.
+            </p>
+            <p>Using referenced controls is also more IDE-friendly as it will automatically understand all identifiers you use to access
+                controls and display suggestions rather than warn you about identifiers coming out from nowhere. On the other hand
+                requires declaring full class name (with namespace) of the control that you want to use.
+            </p>
+            <p>It is also worth mentioning that when using linked controls, the created properties in the owner control are public - 
+                simply because this is how PHP works. However, with referenced controls, you can define whether the control is
+                public, protected or private.
+            </p>
+            <p>
+                If you take all of these information into consideration, you will probably notice that you can combine both 
+                solutions and declare both class property for the control and use control's com name in the template. It is acceptable,
+                however in case of any change in the code you will have two places to maintain.
+            </p>
+            <p>Depending on your particular needs, you can simultaneously use linking and referencing in a single template.
+                Finally it is up to you, however any decision you make, please make sure there is a good reason for it.
+            </p>
+        </ul>
+    </section>
+    <section>
+        <h2>Extending pages</h2>
+        <p>In earlier examples we learned how to create a single and simple page. However in real world, the websites are much
+            more complex and often share common parts, like menus and so on. Basically we can easily achieve the same result in `T`.
+            The framework philosophy states that if two (or more) pages share the same content it means that they extend the base
+            page and inherit the content from it. Simultaneously, they inherit the base page's logic. As `T` API is object oriented,
+            we do it by extending page classes. Simple and intuitive.
+        </p>
+        <p>Let's consider an example. Let's say we want to build a website with common layout and navigation, something like:
+<pre><code>+-----------------------------------+
+|              HEADER               |
++-----------------------------------+
+|                                   |
+|            MAIN CONTENT           |
+|                                   |
++-----------------------------------+
+|              FOOTER               |
++-----------------------------------+
+</code></pre>
+        </p>
+        <p>Let's assume that HEADER, and FOOTER are common for all pages and MAIN CONTENT changes when user visits sub page.</p>
+        <p>Okay, so now let's get back to our home page. We want to change it to display its content in place of the MAIN PANEL.</p>
+        <p>At first, create base class files.</p>
+        <ul>
+            <li><h4>Project/Pages/base.class.php and Project/Pages/base.page:</h4>
+<pre><code>/var/www/html
+    + Framework
+    + Project
+        + Pages
+            + Assets
+            - base.class.php
+            - base.page
+            - home.class.php
+            - home.page
+    - index.php</code></pre>
+            </li>
+            <li><h4>Project/Pages/base.page:</h4>
+<pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <com:Head>
+        <title>MyFirstApp</title>
+    </com:Head>
+    <body>
+        <header>
+            <h1><Header text="HEADER" /></h1>
+        </header>
+        <main>
+            <com:ContentPlaceHolder id="Main" />
+        </main>
+        <footer>
+            FOOTER
+        </footer>
+    </body>
+</html>') %></code></pre>
+                <p>The <com:HyperLink 
+                    navigateUrl="[system:docs:path path=System.Web.Page.Control.TContentPlaceHolder]">TContentPlaceHolder</com:HyperLink>
+                    is a control that takes the content from the sub page and displays it in its own place. You can have multiple
+                    controls of this type on a single page, as well as in subpages if your website is more complex.
+                </p>
+            </li>
+            <li><h4>Project/pages/base.class.php</h4>
+<% highlight_string('<?php 
+namespace Project\Pages;
+
+use System\Web\Page\TPage;
+use System\Web\Action\TActionArgs;
+use System\Web\Page\Control\Core\TLiteral;
+
+class base extends TPage {
+    protected TLiteral $Header;
+
+    protected function Page_Load(TActionArgs $args) : void {
+        $this->Name->text = \'John Doe\';
+    }
+}', true) %>
+                <p>Now let's get back to our previously created home page. First we have to modify its template because no longer full HTML 
+                    is needed, as we want to display it within base page.</p>        
+            </li>
+            <li><h4>Project/pages/home.page</h4>
+<pre><code><% \Docs\master\highlight_html('<com:Content contentPlaceHolderId="Main">
+    <h2>Hello <Name text="T" html.class="foo bar baz" />!</h2>
+</com:Content>') %></code></pre>
+                <p>The <com:HyperLink 
+                    navigateUrl="[system:docs:path path=System.Web.Page.Control.TContent]">TContent</com:HyperLink>
+                    is a control that holds the sub page content. You can have multiple controls of this type on a single sub page to
+                    display in different placeholders in the base page.</p>
+                <p>Now we finally need to modify our home.class.php to let it extend the base page.</p>
+            </li>
+            <li><h4>Project/pages/home.class.php</h4>
+<% highlight_string('<?php 
+namespace Project\Pages;
+
+use System\Web\Action\TActionArgs;
+use System\Web\Page\Control\Core\TText;
+
+class home extends base {
+    protected TText $Name;
+
+    protected function Page_Load(TActionArgs $args) : void {
+        $this->Name->text = \'John Doe\';
+    }
+}', true) %>
+                <p>We simply extend the base page class with our sub page (home) class! Thanks to this, our sub page class:
+                    <ol>
+                        <li>Displays its content within base page class</li>
+                        <li>Inherits base page API and controls so you can manipulate them as well</li>
+                    </ol>
+                </p>
+                <p>Now open up your browser and refresh the page. You should see the layout we designed with the content of
+                    our home page in place of `Main` content placeholder.
+                </p>
+                <p>Okay, I mentioned that we can manipulate the contents of the base page from our sub page level. So let's
+                    say we want to change the text displayed in the header. We have already defined a <com:HyperLink 
+                        navigateUrl="[system:docs:path path=System.Web.Page.Control.TLiteral]">TLiteral</com:HyperLink>
+                    control (`Header`) in our base page, so let's call it:
+                </p>
+<% highlight_string('<?php 
+namespace Project\Pages;
+
+use System\Web\Action\TActionArgs;
+use System\Web\Page\Control\Core\TText;
+
+class home extends base {
+    protected TText $Name;
+
+    protected function Page_Load(TActionArgs $args) : void {
+        $this->Header->text = \'Text from inheriting page!\';
+        $this->Name->text = \'John Doe\';
+    }
+}', true) %>
+                <p>Isn't that simple and intuitive? :) I bet it is, however there is a gotcha: your control ids, defined in owner controls (in this case the pages), 
+                    must be unique within the whole chain of inheritance. For simple pages it is not a big deal, but for more complex pages with
+                    multiple levels of inheritance may become a problem. Do you remember control referencing? Well, this is the case where it can help
+                    you make the code cleaner and less error-prone.
+                </p>
+                <p><com:HyperLink 
+                    navigateUrl="[system:docs:example:pages-extending]" 
+                    html.onclick="window.open(this.href); return false">Click here to try a demo</com:HyperLink>.
+                </p>
+            </li>
+            <li><h4>Under the hood</h4>
+                <p>To understand better how it works: both classes defines their own templates. The `home` class extends the `base` class so
+                    it inherits its logic, but also the template. Both templates are loaded and set as `home` children. When created, the `TContent` 
+                    control looks for named `TContentPlaceHolder` by its `contentPlaceHolderId` prop and sets itself as its child, 
+                    so when `TContentPlaceHolder` is rendered, in fact it renders the `TContent` it was assigned to.
+                </p>
+            </li>
+        </ul>
+    </section>
+    <section>
+        <h2>View state</h2>
+        <p>HTTP protocol is stateless. This means that whenever the server sends a response to the client, the application state is lost. In traditional
+            PHP programming this behavior is often quite hard to handle as it requires the programmer to think about it all the time, especially when
+            creating the forms.</p>
+        <p>The `T` framework has it built-in so the view state of the application can be saved and restored across subsequent requests, as long as 
+            they are POST requests. So creating a `T` application is more like creating a desktop application rather than a server-side web app.
+        </p>
+        <p>When a page posts data to itself, we call it a post back. When a post back occures, the framework first restores the previous state of
+            the page and then, finally, runs the standard life cycle of the application, so from programmer's point of view, you are exactly in the same
+            state as you were before sending the response.
+        </p>
+        <p>To make it all work, all you need to do is put a <com:HyperLink 
+            navigateUrl="[system:docs:path path=System.Web.Page.Form.TForm]">TForm</com:HyperLink> control in your page.</p>
+        <p>Let's create an example page with one button that will show the count of clicks.</p>
+        <ul>
+            <li><h4>home.page</h4>
+<pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <head>
+        <title>View state example</title>
+    </head>
+    <body>
+        <com:Form>
+            <com:Form.Button text="Click me!" onClick="Button_onClick" />
+        </com:Form>
+    </body>
+</html>') %></code></pre>
+                <p>In above template we just put a <com:HyperLink 
+                    navigateUrl="[system:docs:path path=System.Web.Page.Form.TForm]">TForm</com:HyperLink> control to render a post back enabled form
+                    and a <com:HyperLink 
+                    navigateUrl="[system:docs:path path=System.Web.Page.Form.TButton]">Form.TButton</com:HyperLink> which renders to a submit button.
+                </p>
+                <p>Now let's create a PHP code that will automatically increment the button click count and preserve this value in state.</p>
+            </li>
+            <li><h4>home.class.php</h4>
+<% highlight_string('<?php 
+namespace Project\Pages;
+
+use System\Web\Page\Control\State\Stateful;
+use System\Web\Page\Control\Core\Form\TButton;
+use System\Web\Page\Control\Core\Form\TButtonEventArgs;
+use System\Web\Page\TPage;
+
+class home extends TPage {
+    #[Stateful]
+    protected int $clickCount = 0;
+
+    protected function Button_onClick(TButton $sender, TButtonEventArgs $args) : void {
+        $sender->text = \'Click: \'.(++$this->clickCount);
+    }
+}', true) %>
+                <p>Now open the page in your browser. You should see the button with `Click me!` text. Once you click the button,
+                    the page will submit the form to itself (post back) and the button will display `Click: 1`. After the next
+                    click it will display `Click: 2` and so on.
+                </p>
+                <p><com:HyperLink 
+                    navigateUrl="[system:docs:example:viewstate-button-increment]" 
+                    html.onclick="window.open(this.href); return false">Click here to try a demo</com:HyperLink>.
+                </p>
+                <p>How does it work? First, take a look at `\$clickCount` property definition. Right over the property you can find the
+                    <com:HyperLink 
+                        navigateUrl="[system:docs:path path=System.Web.Page.Control.State.Stateful]">Stateful</com:HyperLink> property 
+                        attribute which tells the framework that this property is stateful and should be stored and restored during view 
+                        state transition.
+                </p>
+                <p>What is a view state transition? In short, there are four phases:</p>
+                <ol>
+                    <li><h4>Save state</h4>
+                        <p>First, right before sending the response to the client,
+                            the framework gathers all stateful properties of the controls and saves their state. By default
+                            it puts it in a TForm's hidden field (you can change this behavior - we will learn this later), then sends 
+                            the rendered page to the user.</p>
+                    </li>
+                    <li><h4>Restore state</h4>
+                        <p>Once the user posts back the page, the view state is read and restored to all
+                            controls it was previously saved from.
+                        </p>
+                    </li>
+                    <li><h4>Post back</h4>
+                        <p>Once view state is restored, all submitted data from the form is applied to all controls
+                            implementing <com:HyperLink 
+                                navigateUrl="[system:docs:path path=System.Web.Page.Control.Core.Form.TFormControl]">TFormControl</com:HyperLink>
+                            trait.
+                        </p>
+                    </li>
+                    <li><h4>Post back complete</h4>
+                        <p>Once the state is restored and values from submitted forms fields are applied, the `post back complete`
+                            phase raises all the events caused by form controls, like button's `onClick` event.
+                        </p>
+                    </li>
+                </ol>
+            </li>
+            <li><h4>Disabling view state</h4>
+                <p>By default, the framework saves all view state data for all controls in a hidden form field. The view state data is
+                    gzipped, however the more controls you have, the more data is saved and posted back to the server what can 
+                    affect throughput.</p>
+                <p>For complex pages it is not required to preserve the state of all the controls it contains. You can selectively 
+                    disable view state for controls by setting their `stateful` prop to `false`. Or, you can disable view state for
+                    entire page by setting `\$this->stateful = false` in page's `Page_Init()` method.
+                </p>
+                <p><strong>Note:</strong> disabling view state of parent control disables view state of all its descendants.</p>
+                <ol>
+                    <li><h4>Disabling view state for selected controls</h4>
+                        <pre><code><% \Docs\master\highlight_html('<!doctype html>
+<html>
+    <head>
+        <title>View state disable example</title>
+    </head>
+    <body>
+        <com:Panel id="Panel_1" />
+
+        <com:Form>
+            <com:Panel id="Panel_2" />
+
+            <com:Panel id="Panel_3" stateful="false">
+                <com:Text id="Text_1" />
+            </com:Panel>
+        </com:Form>
+    </body>
+</html>') %></code></pre>               
+                        <p>In example above we disabled view state for `#Panel_3` and its descendant (`#Text_1`). Only `#Panel_1` and `#Panel_2` has its view state enabled.</p>
+                        <p><strong>Note:</strong> controls don't have to be within `&lt;com:Form&gt; ... &lt/com:Form&gt;` to have their view state preserved.</p>
+                    </li>
+                    <li><h4>Disabling view state for entire page</h4>
+<% highlight_string('<?php 
+namespace Project\Pages;
+
+use System\Web\Page\TPage;
+use System\Web\Action\TActionArgs;
+
+class home extends TPage {
+    protected function Page_Init(TActionArgs $args) : void {
+        $this->stateful = false;
+    }
+}', true) %>
+                        <p><strong>Note:</strong> in case of extended pages, disabling view state of a subpage disables viewstate of its parent as well.</p>
+                    </li>
+                </ol>
+            </li>
+        </ul>
+    </section>
+    <section>
+        <h2>Forms</h2>
+    </section>
+    <section>
+        <h2>Forms validation</h2>
+    </section>
+</com:Content>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <com:Head>
+        <meta charset="utf-8" />
+        <title>Docs</title>
+    </com:Head>
+
+    <body>
+        <header>
+            <h1><com:HyperLink navigateUrl="[system:docs:main]">T Documentation</com:HyperLink></h1>
+        </header>
+        <main>
+            <div class="left">
+                <com:.classes.ItemsTree id="IndexTree" />
+            </div>
+            <div class="right">
+                <com:ContentPlaceHolder id="Main" />
+            </div>
+        </main>
+        <footer>
+            Copyright &copy; <com:DateTime format="Y" /> Borys Forytarz. All rights reserved
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,11 @@
+<!doctype html>
+<html>
+    <head>
+        <title>View state example</title>
+    </head>
+    <body>
+        <com:Form>
+            <com:Form.Button text="Click me!" onClick="Button_onClick" />
+        </com:Form>
+    </body>
+</html>

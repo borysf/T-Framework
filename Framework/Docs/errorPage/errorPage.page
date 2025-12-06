@@ -1,0 +1,4 @@
+<com:Content contentPlaceHolderId="Main">
+    <h3><com:Literal id="Header" /></h3>
+    <com:Literal id="Message" />
+</com:Content>
