@@ -1,0 +1,18 @@
+<html>
+    <com:Head>
+        <title>Test</title>
+    </com:Head>
+
+<body>
+    <h1 class="master">H1 in master</h1>
+    <com:Form>
+        <com:Form.TextBox id="Input" />
+        <com:Form.Button onClick="Master_Button_Click" text="click ma!" />
+        <com:Panel id="TestSsth">
+            <p>Content goes here:</p>
+            <com:ContentPlaceHolder id="Content" />
+        </com:Panel>
+    </com:Form>
+</body>
+
+</html>
