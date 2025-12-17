@@ -1,6 +1,7 @@
 <?php
 namespace System\Web\Page\Control\Core;
 
+use System\DataSource\TDataSourceEventArgs;
 use System\Web\Page\Control\Core\DataBound\TDataBindEventArgs;
 use System\Web\Page\Control\Core\DataBound\TDataBoundControl;
 use System\Web\Page\Control\Event\TEventArgs;
@@ -50,9 +51,11 @@ class TRepeater extends TDataBoundControl {
     #[Prop]
     public bool $showFooterWhenEmpty = false;
 
-    private TTemplate $__headerItem;
-    private TTemplate $__footerItem;
-    private TControl $__itemsContainer;
+    private ?TTemplate $__headerItem;
+    private ?TTemplate $__footerItem;
+    private TContainer $__itemsContainer;
+    private TContainer $__headerContainer;
+    private TContainer $__footerContainer;
 
     protected function createItem(string|int $key, int $count, mixed $data, int|string $index, ?int $iteration = null): TControl {
         $_ = null;
@@ -84,10 +87,12 @@ class TRepeater extends TDataBoundControl {
     protected function createEmptyItem(): ?TControl {
         if (isset($this->__headerItem) && !$this->showHeaderWhenEmpty) {
             $this->__headerItem->remove();
+            $this->__headerItem = null;
         }
 
         if (isset($this->__footerItem) && !$this->showFooterWhenEmpty) {
             $this->__footerItem->remove();
+            $this->__footerItem = null;
         }
 
         if (isset($this->emptyTemplate)) {
@@ -97,7 +102,7 @@ class TRepeater extends TDataBoundControl {
         return null;
     }
 
-    protected function onAddItem(?TEventArgs $args) : void {
+    protected function onAddItem(?TDataSourceEventArgs $args) : void {
         if (isset($this->separatorTemplate) && $args->index > 0 && $args->index == count($this->itemsContainer()->getControls()) - 1) {
             $this->itemsContainer()->getControlAtIndex($args->index - 1)->addControl(
                 $this->separatorTemplate->instance()
@@ -105,38 +110,53 @@ class TRepeater extends TDataBoundControl {
         }
     }
 
-    protected function onRemoveItem(?TEventArgs $args) : void {
+    protected function onRemoveItem(?TDataSourceEventArgs $args) : void {
         if (isset($this->separatorTemplate) && $args->index > 0 && $args->index == count($this->itemsContainer()->getControls())) {
             $this->itemsContainer()->getControlAtIndex($args->index - 1)->removeControlAtIndex(1);
         }
     }
 
-    protected function onDataBindBegin(TDataBindEventArgs $args) : void {
-        if (isset($this->headerTemplate)) {
-            if (($args->count == 0 && $this->showHeaderWhenEmpty) || $args->count > 0) {
-                $this->__headerItem = $this->headerTemplate->instance();
-                $this->addControl($this->__headerItem, 0);
-            }
-        }        
-    }
-
-    protected function onDataBindComplete(TDataBindEventArgs $args) : void {
-        if (isset($this->footerTemplate)) {
-            if (($args->count == 0 && $this->showFooterWhenEmpty) || $args->count > 0) {
-                $this->__footerItem = $this->footerTemplate->instance();
-                $this->addControl($this->__footerItem);
-            }
-        }
-    }
-
     protected function itemsContainer(): TControl {
-        if (!isset($this->__itemsContainer)) {
-            $this->__itemsContainer = new TContainer;
-            $this->addControl($this->__itemsContainer);
-        }
-
         return $this->__itemsContainer;
     }
+
+    protected function onMount(?TEventArgs $args): void
+    {
+        parent::onMount($args);
+        
+        $this->__headerContainer = new TContainer;
+        $this->addControl($this->__headerContainer);
+
+        $this->__itemsContainer = new TContainer;
+        $this->addControl($this->__itemsContainer);
+
+        $this->__footerContainer = new TContainer;
+        $this->addControl($this->__footerContainer);
+    }
+
+    protected function onRender(?TEventArgs $args): void
+    {
+        $count = $this->dataBound ? count($this->dataSource) : 0;
+
+        if (isset($this->headerTemplate)) {
+            if (($count == 0 && $this->showHeaderWhenEmpty) || $count > 0) {
+                $this->__headerItem = $this->headerTemplate->instance();
+                $this->__headerContainer->addControl($this->__headerItem);
+            }
+        }
+
+        if (isset($this->footerTemplate)) {
+            if (($count == 0 && $this->showFooterWhenEmpty) || $count > 0) {
+                $this->__footerItem = $this->footerTemplate->instance();
+                $this->__footerContainer->addControl($this->__footerItem);
+            }
+        }
+
+        parent::onRender($args);
+    }
+
+    protected function onDataBindBegin(TDataBindEventArgs $args) : void {}
+    protected function onDataBindComplete(TDataBindEventArgs $args) : void {}
 
     protected function onHeaderDataBind(TDataBindEventArgs $args) : void {}
     protected function onFooterDataBind(TDataBindEventArgs $args) : void {}

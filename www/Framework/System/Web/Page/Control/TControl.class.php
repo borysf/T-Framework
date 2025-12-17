@@ -107,7 +107,6 @@ abstract class TControl extends TComponent
 
         if ($this->stateful) {
             $this->state = new TControlState($this, $this->__getProps(Stateful::class, true));
-            $this->state->_rendered = false;
         }
 
         if (($this::HTML_HAS_ATTRIBUTES && $this::HTML_TAG_NAME) || $this->customTagName()) {
@@ -334,7 +333,9 @@ abstract class TControl extends TComponent
      */
     final public function remove(): void
     {
-        $this->parent->removeControl($this);
+        if (isset($this->parent)) {
+            $this->parent->removeControl($this);
+        }
     }
 
     /**

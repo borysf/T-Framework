@@ -20,6 +20,9 @@ class TViewState
     private IViewStateProvider $__provider;
     private THttpRequest $__request;
 
+    public const FORM_CONTROL_HTML_NAME_PREFIX = '__V';
+    private const VIEWSTATE_FIELD_NAME = '__VIEWSTATE';
+
     public function __construct(THttpRequest $request, IViewStateProvider $provider)
     {
         $this->__request = $request;
@@ -28,10 +31,10 @@ class TViewState
 
     public function restore(TPage $page)
     {
-        if ($this->__request->method() == 'POST' && isset($this->__request->post->__VIEWSTATE)) {
+        if ($this->__request->method() == 'POST' && isset($this->__request->post[self::VIEWSTATE_FIELD_NAME])) {
             $page->__setIsPostBack(true);
 
-            $viewState = $this->__read($this->__request->post->__VIEWSTATE, $this->__generateTemplatesHash($page));
+            $viewState = $this->__read($this->__request->post[self::VIEWSTATE_FIELD_NAME], $this->__generateTemplatesHash($page));
 
             if (!$viewState) {
                 return;
@@ -60,8 +63,8 @@ class TViewState
                 if ($children->usesTrait(TFormControl::class)) {
                     if ($children->getState()->visible) {
                         $postBackArgs = new TPostBackEventArgs(
-                            isset($this->__request->post->__V[$childSystemId]) 
-                                ? $this->__request->post->__V[$childSystemId] 
+                            isset($this->__request->post[self::FORM_CONTROL_HTML_NAME_PREFIX][$childSystemId]) 
+                                ? $this->__request->post[self::FORM_CONTROL_HTML_NAME_PREFIX][$childSystemId] 
                                 : null
                         );
 
@@ -112,7 +115,7 @@ class TViewState
             $viewState[$id] = $children->getState()->dump();
         }
 
-        $state = new THiddenField(['html.name' => '__VIEWSTATE', 'text' => $this->__write($viewState, $this->__generateTemplatesHash($page))]);
+        $state = new THiddenField(['html.name' => self::VIEWSTATE_FIELD_NAME, 'text' => $this->__write($viewState, $this->__generateTemplatesHash($page))]);
 
         $form->addControl(new TTemplateLiteralWhite(['text' => "\n\t"]));
         $form->addControl($state);

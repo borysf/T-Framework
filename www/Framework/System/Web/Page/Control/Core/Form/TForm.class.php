@@ -14,6 +14,8 @@ class TForm extends TControl {
     const HTML_TAG_NAME = 'form';
     const HTML_HAS_END_TAG = true;
 
+    protected const ASSETS = ['TForm.js'];
+
     protected function onRender(?TEventArgs $args) : void {
         $this->html->method = 'post';
     }

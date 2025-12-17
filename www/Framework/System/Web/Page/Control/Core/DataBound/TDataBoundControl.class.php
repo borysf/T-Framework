@@ -98,10 +98,10 @@ abstract class TDataBoundControl extends TControl implements IDataBoundControl {
                 $this->dataSource->on('onRemove', function (TDataSource $sender, TDataSourceEventArgs $args) {
                     $this->itemsContainer()->removeControlAtIndex($args->index);
 
-                    $_args = new TEventArgs;
-                    $_args->index = $args->index;
+                    // $_args = new TEventArgs;
+                    // $_args->index = $args->index;
 
-                    $this->raise('onRemoveItem', $_args);
+                    $this->raise('onRemoveItem', $args);
 
                     if ($this->dataSource->count() == 0) {
                         $this->__createEmptyItem();
@@ -111,10 +111,10 @@ abstract class TDataBoundControl extends TControl implements IDataBoundControl {
                 $this->dataSource->on('onAdd', function (TDataSource $sender, TDataSourceEventArgs $args) {
                     $this->__createItem($args->data->key, $this->dataSource->count(), $args->data->value, $args->index, $args->index === 0 ? 0 : $this->dataSource->count() - 1);
 
-                    $_args = new TEventArgs;
-                    $_args->index = $args->index;
+                    // $_args = new TEventArgs;
+                    // $_args->index = $args->index;
 
-                    $this->raise('onAddItem', $_args);
+                    $this->raise('onAddItem', $args);
                 });
 
                 $this->dataSource->on('onRemoveAll', function (TDataSource $sender, TDataSourceEventArgs $args) {
@@ -144,9 +144,9 @@ abstract class TDataBoundControl extends TControl implements IDataBoundControl {
         }
     }
 
-    protected function onAddItem(?TEventArgs $args) : void {}
-    protected function onRemoveItem(?TEventArgs $args) : void {}
-    protected function onRemoveAll(?TEventArgs $args) : void {}
+    protected function onAddItem(?TDataSourceEventArgs $args) : void {}
+    protected function onRemoveItem(?TDataSourceEventArgs $args) : void {}
+    protected function onRemoveAll(?TDataSourceEventArgs $args) : void {}
 
     protected function onDataBindBegin(TDataBindEventArgs $args) : void {}
     protected function onEmptyDataBind(TDataBindEventArgs $args) : void {}

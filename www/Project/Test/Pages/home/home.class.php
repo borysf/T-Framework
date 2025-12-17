@@ -26,6 +26,9 @@ class home extends master {
             $this->MultiSelect->dataSource = ['foo', 'bar', 'baz'];
             $this->MultiSelect->dataBind();
         }
+
+        $this->Rows->showHeaderWhenEmpty = $this->ShowHeaderFooterCheckBox->checked;
+        $this->Rows->showFooterWhenEmpty = $this->ShowHeaderFooterCheckBox->checked;
     }
 
     protected function Button_Count_Clicked(TButton $sender, TButtonEventArgs $args) {
@@ -65,11 +68,11 @@ class home extends master {
     }
 
     protected function Add_First_Clicked(TButton $sender) {
-        $this->Rows->dataSource->add('grr', 0);
+        $this->Rows->dataSource->add(time(), 0);
     }
 
     protected function Add_Last_Clicked(TButton $sender) {
-        $this->Rows->dataSource->add('grr');
+        $this->Rows->dataSource->add(time());
     }
 
     protected function Remove_First_Clicked(TButton $sender) {
@@ -87,5 +90,4 @@ class home extends master {
     protected function Switch_View_Button_Click(TButton $sender, TButtonEventArgs $args) {
         $this->Views->activeViewIndex = $args->data;
     }
-
 }

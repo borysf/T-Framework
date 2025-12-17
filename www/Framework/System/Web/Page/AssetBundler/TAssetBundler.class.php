@@ -91,7 +91,7 @@ class TAssetBundler
 
             $manifest = ['path' => $bundlePath, 'assets' => []];
 
-            if (file_exists($manifestFile) && TApplication::isProduction()) {
+            if (TApplication::isProduction() && file_exists($manifestFile)) {
                 $manifest = unserialize(file_get_contents($manifestFile));
 
                 foreach ($manifest['assets'] as $asset) {
@@ -116,7 +116,7 @@ class TAssetBundler
                             : [
                                 'source'            => $bundlePath . $assetFileSource,
                                 'dest'              => $cacheDir . $assetFileDest,
-                                'fileName'          => $assetFileDest,
+                                'fileName'          => substr(sha1($assetFileDest), 0, 7) . '.' . $extension,
                                 'type'              => $extension,
                                 'bundleId'          => $bundleId,
                             ]

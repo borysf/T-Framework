@@ -28,9 +28,10 @@
                     <com:Form.Button text="Remove first" onClick="Remove_First_Clicked" />
                     <com:Form.Button text="Remove last" onClick="Remove_Last_Clicked" />
                     <com:Form.Button text="Empty" onClick="Empty_Clicked" />
+                    <com:Form.CheckBox id="ShowHeaderFooterCheckBox" checked="true" html.id="shf" causesPostBack="true" /><label for="shf">Show header/footer when empty</label>
                 </div>
 
-                <com:Repeater id="Rows" onItemDataBind="Rows_DataBind" showHeaderWhenEmpty="true" showFooterWhenEmpty="true">
+                <com:Repeater id="Rows" onItemDataBind="Rows_DataBind">
                     <prop:headerTemplate>
                         <div>This is header</div>
                     </prop:headerTemplate>
@@ -44,7 +45,7 @@
                         </div>
                     </prop:itemTemplate>
                     <prop:separatorTemplate>
-                        <div>---</div>
+                        <div><hr /></div>
                     </prop:separatorTemplate>
                     <prop:footerTemplate>
                         <div>This is footer</div>

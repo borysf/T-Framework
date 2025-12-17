@@ -1,6 +1,7 @@
 <?php
 namespace System\Web\Page\Control\Core\Form;
 
+use System\Web\Page\Control\State\TViewState;
 use System\Web\TPostBackEventArgs;
 
 trait TFormControl {
@@ -12,7 +13,9 @@ trait TFormControl {
     }
 
     protected function createHtmlName() : string {
-        return !isset($this->html->name) ? '__V['.$this->getSystemId().'][]' : $this->html->name;
+        return !isset($this->html->name) 
+            ? TViewState::FORM_CONTROL_HTML_NAME_PREFIX.'['.$this->getSystemId().'][]' 
+            : $this->html->name;
     }
 
     /** Event fires when post back occures. */

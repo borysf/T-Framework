@@ -12,6 +12,9 @@ class TMultiSelect extends TBaseListControl {
     #[Prop, Stateful]
     public array $selectedValues = [];
 
+    #[Prop]
+    public bool $causesPostBack = false;
+
     protected function shouldSelectOption(TListOption $option) : bool {
         return in_array($option->value, $this->selectedValues);
     }
@@ -25,6 +28,11 @@ class TMultiSelect extends TBaseListControl {
 
     protected function onRender(?TEventArgs $args) : void {
         $this->html->multiple = true;
+
+        if ($this->causesPostBack) {
+            $this->html->onchange .= ';__doPostBack()';
+        }
+
         parent::onRender($args);
     }
 }

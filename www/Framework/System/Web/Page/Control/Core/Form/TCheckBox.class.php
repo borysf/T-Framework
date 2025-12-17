@@ -16,6 +16,9 @@ class TCheckBox extends TControl {
     #[Prop, Stateful]
     public bool $checked = false;
 
+    #[Prop]
+    public bool $causesPostBack = false;
+
     protected function onPostBack(?TPostBackEventArgs $args) : void {        
         if ($args->value === null) {
             return;
@@ -35,6 +38,10 @@ class TCheckBox extends TControl {
         $this->html->type = 'checkbox';
         $this->html->checked = $this->checked;
         $this->setHtmlName();
+
+        if ($this->causesPostBack) {
+            $this->html->onclick .= ';__doPostBack()';
+        }
 
         parent::onRender($args);
     }
