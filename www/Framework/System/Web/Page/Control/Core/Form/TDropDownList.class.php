@@ -12,7 +12,7 @@ class TDropDownList extends TBaseListControl {
     #[Prop, Stateful]
     public mixed $selectedValue = null;
 
-    #[Prop]
+    #[Prop, Stateful]
     public bool $causesPostBack = false;
 
     protected function shouldSelectOption(TListOption $option) : bool {

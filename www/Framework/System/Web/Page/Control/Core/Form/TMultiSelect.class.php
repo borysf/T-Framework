@@ -12,7 +12,7 @@ class TMultiSelect extends TBaseListControl {
     #[Prop, Stateful]
     public array $selectedValues = [];
 
-    #[Prop]
+    #[Prop, Stateful]
     public bool $causesPostBack = false;
 
     protected function shouldSelectOption(TListOption $option) : bool {

@@ -52,6 +52,7 @@ class home extends master {
         $args->item->Input->text = $args->item->Input->getSystemId().' ('.$args->data.') #'.$args->key;
         $args->item->Button->key = $args->key;
         $args->item->DeleteButton->key = $args->key;
+        $args->item->Checkbox->key = $args->key;
     }
 
     protected function Input_ToggleEdit(TButton $sender, TButtonEventArgs $args) {

@@ -17,7 +17,7 @@ class App extends TApplication {
 
     protected function configureHttpGuard(THttpGuard $guard): void
     {
-        $guard->enableCsrfProtection();
+        // $guard->enableCsrfProtection();
     }
 
     protected function processResponse(THttpResponse $response): void

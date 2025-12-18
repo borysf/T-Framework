@@ -40,6 +40,7 @@
                     </prop:emptyTemplate>
                     <prop:itemTemplate>
                         <div>
+                            <com:Form.CheckBox id="Checkbox" />
                             <com:Form.TextBox id="Input" html.size="30" /><com:Form.Button id="Button" onClick="Rows_Button_Click" />
                             <com:Form.Button id="DeleteButton" onClick="Rows_Button_Delete_Click" text="Delete" />
                         </div>

@@ -122,8 +122,6 @@ class TRepeater extends TDataBoundControl {
 
     protected function onMount(?TEventArgs $args): void
     {
-        parent::onMount($args);
-        
         $this->__headerContainer = new TContainer;
         $this->addControl($this->__headerContainer);
 
@@ -132,6 +130,8 @@ class TRepeater extends TDataBoundControl {
 
         $this->__footerContainer = new TContainer;
         $this->addControl($this->__footerContainer);
+
+        parent::onMount($args);
     }
 
     protected function onRender(?TEventArgs $args): void

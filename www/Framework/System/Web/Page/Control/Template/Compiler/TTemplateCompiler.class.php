@@ -924,7 +924,9 @@ class TTemplateCompiler
         if ($_value == 'true' || $_value == 'yes') {
             $value = true;
         } else if ($_value == 'false' || $_value == 'no') {
-            $value = false;
+            $value = false; 
+        } else if ($_value == 'null') {
+            $value = null;
         } else if (is_numeric($_value)) {
             $_int = intval($_value);
             $_float = floatval($_value);

@@ -13,11 +13,28 @@ class TCheckBox extends TControl {
     const HTML_TAG_NAME = 'input';
     const HTML_HAS_END_TAG = false;
 
+    private THiddenField $_hidden;
+
     #[Prop, Stateful]
     public bool $checked = false;
 
-    #[Prop]
+    #[Prop, Stateful]
     public bool $causesPostBack = false;
+
+    protected function onCreate(?TEventArgs $args): void
+    {
+        parent::onCreate($args);
+        $this->_hidden = new THiddenField;
+    }
+
+    protected function onMount(?TEventArgs $args): void
+    {
+        parent::onMount($args);
+        // hidden field of the same name is required to detect if the checkbox has been sent
+        // with checked or unchecked state, otherwise restoring `checked` state upon postback
+        // may not work properly in case when checkbox gets hidden during postbacks
+        $this->parent->addControlNextTo($this->_hidden, $this);
+    }
 
     protected function onPostBack(?TPostBackEventArgs $args) : void {        
         if ($args->value === null) {
@@ -35,23 +52,16 @@ class TCheckBox extends TControl {
     }
     
     protected function onRender(?TEventArgs $args) : void {
-        $this->html->type = 'checkbox';
-        $this->html->checked = $this->checked;
         $this->setHtmlName();
 
+        $this->html->type = 'checkbox';
+        $this->html->checked = $this->checked;
+        $this->_hidden->html->name = $this->html->name;
+
         if ($this->causesPostBack) {
-            $this->html->onclick .= ';__doPostBack()';
+            $this->html->onclick .= ';T.doPostBack()';
         }
 
         parent::onRender($args);
-    }
-
-    protected function onMount(?TEventArgs $args): void
-    {
-        parent::onMount($args);
-        // hidden field of the same name is required to detect if the checkbox has been sent
-        // with checked or unchecked state, otherwise restoring `checked` state upon postback
-        // may not work properly in case when checkbox gets hidden during postbacks
-        $this->parent->addControlNextTo(new THiddenField(['html.name' => $this->createHtmlName()]), $this);
     }
 }
