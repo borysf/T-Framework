@@ -61,6 +61,7 @@ class TRepeater extends TDataBoundControl {
         $_ = null;
 
         $args = ['args' => new TDataBindEventArgs(
+            dataSource: $this->dataSource,
             item: $_, 
             data: $data, 
             count: $count, 

@@ -10,6 +10,7 @@ use System\Web\Page\Control\Event\TEventArgs;
 class TDataSourceRow {
     public mixed $value;
     public int $key;
+    public bool $isSelected = false;
 
     public function __construct(mixed &$value, int $key) {
         $this->value = &$value;
@@ -17,7 +18,7 @@ class TDataSourceRow {
     }
 }
 
-class TDataSource extends TComponent implements ArrayAccess, Countable, Iterator {
+class TDataSource extends TComponent implements ArrayAccess, Countable, Iterator, ISelectionSource {
     protected array $_data;
     protected array $_keys;
     protected int $_pointer;
@@ -39,7 +40,7 @@ class TDataSource extends TComponent implements ArrayAccess, Countable, Iterator
 
     public function offsetSet(mixed $offset, mixed $value): void {
         $this->_data[$offset] = $value;
-        $this->_accessed[$offset] = new TDataSourceRow($value, isset($this->_accessed[$offset]) ? $this->_accessed[$offset] : $this->_key++);
+        $this->_accessed[$offset] = new TDataSourceRow($value, isset($this->_accessed[$offset]) ? $this->_accessed[$offset]->key : $this->_key++);
     }
 
     public function offsetExists(mixed $offset): bool {
@@ -176,6 +177,50 @@ class TDataSource extends TComponent implements ArrayAccess, Countable, Iterator
         }
 
         $this->raise('onRemoveAll', new TDataSourceEventArgs(null, null));
+    }
+
+    public function select(int $key) : bool {
+        foreach ($this->_accessed as $k => $v) {
+            if ($v->key == $key) {
+                $v->isSelected = true;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function deselect(int $key) : bool {
+        foreach ($this->_accessed as $v) {
+            if ($v->key == $key) {
+                $v->isSelected = false;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function isSelected(int $key) : bool {
+        foreach ($this->_accessed as $v) {
+            if ($v->key == $key) {
+                return $v->isSelected;
+            }
+        }
+
+        return false;
+    }
+
+    public function removeSelected() : void {
+        foreach ($this->_accessed as $v) {
+            if ($v->isSelected) {
+                $this->remove($v->key);
+            }
+        }
+    }
+
+    public function getSelected() : array {
+        return array_filter($this->_accessed, fn($v) => $v->isSelected);
     }
 
     protected function onAdd(?TEventArgs $args) {}

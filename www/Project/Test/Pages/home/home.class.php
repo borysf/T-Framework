@@ -53,6 +53,15 @@ class home extends master {
         $args->item->Button->key = $args->key;
         $args->item->DeleteButton->key = $args->key;
         $args->item->Checkbox->key = $args->key;
+        $args->item->Checkbox->selectionSource = $args->dataSource;
+    }
+
+    protected function Show_Checked_Clicked(TButton $sender) {
+        $sender->text = 'Checked: '.implode(', ', array_map(fn($v) => $v->key, $this->Rows->dataSource->getSelected()));
+    }
+
+    protected function Remove_Selected_Clicked(TButton $sender) {
+        $this->Rows->dataSource->removeSelected();
     }
 
     protected function Input_ToggleEdit(TButton $sender, TButtonEventArgs $args) {

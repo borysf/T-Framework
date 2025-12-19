@@ -52,6 +52,8 @@
                         <div>This is footer</div>
                     </prop:footerTemplate>
                 </com:Repeater>
+                <com:Form.Button onClick="Show_Checked_Clicked" text="Show checked items" />
+                <com:Form.Button onClick="Remove_Selected_Clicked" text="Remove selected items" />
             </com:MultiView.View>
         </com:MultiView>
 

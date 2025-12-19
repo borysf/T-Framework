@@ -31,7 +31,10 @@ abstract class TDataBoundControl extends TControl implements IDataBoundControl {
 
         $this->itemsContainer()->addControl($item);
 
-        $args = new TDataBindEventArgs($this->getDataBindItem($item));
+        $args = new TDataBindEventArgs(
+            dataSource: $this->dataSource,
+            item: $this->getDataBindItem($item)
+        );
 
         $this->raise('onEmptyDataBind', $args);
         $item->propagate('onMount');
@@ -51,7 +54,15 @@ abstract class TDataBoundControl extends TControl implements IDataBoundControl {
 
         $this->itemsContainer()->addControl($item, is_int($index) ? $index : null);
 
-        $args = new TDataBindEventArgs($this->getDataBindItem($item), $data, $key, $count, $index, $iteration);
+        $args = new TDataBindEventArgs(
+            dataSource: $this->dataSource,
+            item: $this->getDataBindItem($item),
+            data: $data,
+            key: $key,
+            count: $count,
+            index: $index,
+            iteration: $iteration
+        );
 
         $this->raise('onItemDataBind', $args);
         $item->propagate('onMount');
@@ -115,7 +126,7 @@ abstract class TDataBoundControl extends TControl implements IDataBoundControl {
             }
 
             $count = count($this->dataSource);
-            $args = new TDataBindEventArgs(count: $count);
+            $args = new TDataBindEventArgs(dataSource: $this->dataSource, count: $count);
 
             $this->raise('onDataBindBegin', $args);
 

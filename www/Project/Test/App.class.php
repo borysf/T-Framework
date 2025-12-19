@@ -2,10 +2,14 @@
 namespace Project\Test;
 
 use System\Debug\TDebug;
+use System\Http\Auth\THttpAuthProvider;
 use System\Http\Response\THttpResponse;
 use System\TApplication;
 use System\Http\Router\THttpRouter;
 use System\Http\Security\Guard\THttpGuard;
+use System\Security\Auth\IAuthProvider;
+use System\Web\Page\Control\State\IViewStateProvider;
+use System\Web\Page\Control\State\TViewStateProvider;
 use tidy;
 
 class App extends TApplication {
@@ -18,6 +22,16 @@ class App extends TApplication {
     protected function configureHttpGuard(THttpGuard $guard): void
     {
         // $guard->enableCsrfProtection();
+    }
+
+    protected function createViewStateProvider(): IViewStateProvider
+    {
+        return new TViewStateProvider('l0r3MipsUmDo10rS1t!');
+    }
+
+    protected function createAuthProvider(): IAuthProvider
+    {
+        return new THttpAuthProvider();
     }
 
     protected function processResponse(THttpResponse $response): void

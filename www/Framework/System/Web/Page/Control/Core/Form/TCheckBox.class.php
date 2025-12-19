@@ -1,6 +1,7 @@
 <?php
 namespace System\Web\Page\Control\Core\Form;
 
+use System\DataSource\ISelectionSource;
 use System\Web\Page\Control\Event\TEventArgs;
 use System\Web\Page\Control\Prop;
 use System\Web\Page\Control\State\Stateful;
@@ -20,6 +21,8 @@ class TCheckBox extends TControl {
 
     #[Prop, Stateful]
     public bool $causesPostBack = false;
+
+    public ?ISelectionSource $selectionSource = null;
 
     protected function onCreate(?TEventArgs $args): void
     {
@@ -44,9 +47,15 @@ class TCheckBox extends TControl {
         switch (count($args->value)) {
             case 1:
                 $this->checked = false;
+                if ($this->selectionSource !== null) {
+                    $this->selectionSource->deselect($this->key);
+                }
                 break;
             case 2:
                 $this->checked = true;
+                if ($this->selectionSource !== null) {
+                    $this->selectionSource->select($this->key);
+                }
                 break;
         }
     }
