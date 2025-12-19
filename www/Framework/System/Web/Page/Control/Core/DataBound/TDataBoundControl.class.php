@@ -100,8 +100,6 @@ abstract class TDataBoundControl extends TControl implements IDataBoundControl {
         if ($this->dataBound) {
             $isDS = $this->dataSource instanceof TDataSource;
 
-            $container = $this->itemsContainer();
-
             if ($isDS) {
                 $this->dataSource->on('onRemove', function (TDataSource $sender, TDataSourceEventArgs $args) {
                     $this->itemsContainer()->removeControlAtIndex($args->index);
